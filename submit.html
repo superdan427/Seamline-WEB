@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>SEAMLINE WEB 0.9</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="./styles/main.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="icon-button" onclick="history.back()">←</button>
+      </div>
+      <div class="topbar-center" id="home-title">SEAMLINE WEB 0.9</div>
+      <div class="topbar-right"></div>
+    </header>
+
+    <main class="simple-page">
+      <h2>About Seamline</h2>
+      <p>Coming soon.</p>
+    </main>
+
+    <script type="module">
+      document.getElementById("home-title")?.addEventListener("click", () => {
+        window.location.href = "index.html";
+      });
+    </script>
+  </body>
+</html>
+

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>SEAMLINE WEB 0.9</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="./styles/main.css" />
+  </head>
+  <body class="page-saved">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="icon-button" onclick="history.back()">←</button>
+      </div>
+      <div class="topbar-center" id="home-title">SEAMLINE WEB 0.9</div>
+      <div class="topbar-right"></div>
+    </header>
+
+    <main class="saved-page">
+      <section class="account-card saved-intro">
+        <h2>Saved places</h2>
+        <p class="muted">Organise your favourite fabric shops into quick filters and custom folders.</p>
+        <div id="saved-message" class="account-message" aria-live="polite"></div>
+        <p id="saved-guest" class="muted">
+          Log in on this device to start saving places and building collections.
+        </p>
+      </section>
+
+      <div id="saved-content" class="saved-content hidden">
+        <section class="account-card create-collection-card">
+          <h3>Create a collection</h3>
+          <form id="collection-form" autocomplete="off">
+            <label class="field-label" for="collection-name">Collection name</label>
+            <div class="collection-form-row">
+              <input id="collection-name" name="collection" type="text" required placeholder="e.g. Fabrics" />
+              <button class="primary-btn" type="submit">Create</button>
+            </div>
+            <p class="muted">Try folders like "Fabrics", "Trimmings", "Services", or any theme you need.</p>
+          </form>
+        </section>
+
+        <section class="account-card">
+          <h3>Your collections</h3>
+          <div id="collection-list" class="collection-list muted"></div>
+        </section>
+
+        <section class="account-card">
+          <div class="saved-filters" id="saved-filters"></div>
+          <div id="saved-items" class="saved-cards"></div>
+        </section>
+      </div>
+    </main>
+
+    <script type="module" src="./src/saved.js"></script>
+  </body>
+</html>
