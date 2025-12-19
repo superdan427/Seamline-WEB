@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>SEAMLINE WEB 0.9</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="./styles/main.css" />
+  </head>
+  <body class="page-account">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="icon-button" onclick="history.back()">←</button>
+      </div>
+      <div class="topbar-center" id="home-title">SEAMLINE WEB 0.9</div>
+      <div class="topbar-right"></div>
+    </header>
+
+    <main class="account-page">
+      <section id="auth-panels" class="account-grid">
+        <div class="account-card">
+          <h2>Create an account</h2>
+          <p class="muted">
+            Save your favourite fabric shops so you can come back to them later.
+          </p>
+          <form id="signup-form" autocomplete="off">
+            <label class="field-label" for="signup-name">Name</label>
+            <input id="signup-name" name="name" type="text" required />
+
+            <label class="field-label" for="signup-email">Email</label>
+            <input id="signup-email" name="email" type="email" required />
+
+            <label class="field-label" for="signup-password">Password</label>
+            <input id="signup-password" name="password" type="password" required />
+
+            <button class="primary-btn" type="submit">Sign up</button>
+          </form>
+        </div>
+
+        <div class="account-card">
+          <h2>Log in</h2>
+          <p class="muted">Already have an account on this device?</p>
+          <form id="login-form" autocomplete="off">
+            <label class="field-label" for="login-email">Email</label>
+            <input id="login-email" name="email" type="email" required />
+
+            <label class="field-label" for="login-password">Password</label>
+            <input id="login-password" name="password" type="password" required />
+
+            <button class="secondary-btn" type="submit">Log in</button>
+          </form>
+        </div>
+      </section>
+
+      <section id="account-dashboard" class="account-card hidden">
+        <div class="account-header">
+          <div>
+            <h2>Hi, <span id="account-name"></span></h2>
+            <p class="muted" id="account-email"></p>
+          </div>
+          <button id="logout-btn" class="icon-button" type="button" aria-label="Log out">
+            Log out
+          </button>
+        </div>
+
+        <div id="account-message" class="account-message" aria-live="polite"></div>
+
+        <div class="saved-section">
+          <h3>Saved places</h3>
+          <div id="saved-list" class="saved-list"></div>
+        </div>
+      </section>
+    </main>
+
+    <script type="module" src="./src/account.js"></script>
+  </body>
+</html>

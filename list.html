@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>SEAMLINE WEB 0.9</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link rel="stylesheet" href="./styles/main.css" />
+  </head>
+
+  <body class="page-list">
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="icon-button" onclick="history.back()" aria-label="Back">←</button>
+      </div>
+
+      <div class="topbar-center" id="home-title">SEAMLINE WEB 0.9</div>
+
+      <div class="topbar-right"></div>
+    </header>
+
+    <!-- Filters -->
+    <div class="filterbar">
+      <div id="filters" class="filters-row"></div>
+    </div>
+
+    <!-- List -->
+    <main id="list">
+      <div id="list-items"></div>
+    </main>
+
+    <script type="module" src="./src/listPage.js"></script>
+  </body>
+</html>

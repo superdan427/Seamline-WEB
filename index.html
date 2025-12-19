@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>SEAMLINE WEB 0.9</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Mapbox -->
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+    <link
+      href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="./styles/main.css" />
+  </head>
+
+  <body class="page-home">
+    <!-- Side menu -->
+    <div id="menu-overlay" class="menu-overlay hidden"></div>
+    <nav id="side-menu" class="side-menu" aria-hidden="true">
+      <div class="side-menu-inner">
+        <a class="menu-item" href="index.html">Home (Map)</a>
+        <a class="menu-item" href="list.html">List view</a>
+        <a class="menu-item" href="search.html">Search</a>
+        <a class="menu-item" href="saved.html">Saved places</a>
+        <a class="menu-item" href="submit.html">Submit a place</a>
+        <a class="menu-item" href="about.html">About</a>
+        <a class="menu-item" id="account-menu-link" href="account.html">Log in / Sign up</a>
+      </div>
+    </nav>
+
+    <!-- Topbar -->
+    <header class="topbar topbar-overlay">
+      <div class="topbar-left">
+        <button id="menu-button" class="icon-button" aria-label="Menu">☰</button>
+      </div>
+
+      <div class="topbar-center" id="home-title">SEAMLINE WEB 0.9</div>
+
+      <div class="topbar-right">
+        <button
+          id="style-toggle"
+          class="icon-button"
+          aria-label="Toggle dark mode"
+          aria-pressed="false"
+          type="button"
+        >
+          Dark
+        </button>
+      </div>
+    </header>
+
+    <!-- Filter bar (transparent overlay) -->
+    <div class="filterbar filterbar-overlay">
+      <div id="filters" class="filters-row"></div>
+    </div>
+
+    <!-- Map -->
+    <div id="map" class="map-full"></div>
+
+    <!-- Modal -->
+    <div id="modal" class="modal hidden" aria-hidden="true">
+      <div class="modal-content">
+        <button id="modal-close" class="modal-close" aria-label="Close">×</button>
+        <div id="modal-body"></div>
+      </div>
+    </div>
+
+    <script type="module" src="./src/home.js"></script>
+  </body>
+</html>
