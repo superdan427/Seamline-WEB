@@ -11,7 +11,7 @@
 // ============================================================================
 
 // Default/placeholder values (will be overridden by config.local.js)
-window.SUPABASE_URL = window.SUPABASE_URL || "sb_publishable_eElxtc7sM2tdbCat5-qtLg_YaiYHbiB";
+window.SUPABASE_URL = window.SUPABASE_URL || "https://vnorasexpaddfkznlbjn.supabase.co";
 window.SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZub3Jhc2V4cGFkZGZrem5sYmpuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYyNDQxMTUsImV4cCI6MjA4MTgyMDExNX0.d5mS2Oo6X9K1BV0nj7IdY0KxMsM4s_vZunJ3JR64nr8";
 window.MAPBOX_TOKEN = window.MAPBOX_TOKEN || "pk.eyJ1Ijoic3VwZXJkYW40MjciLCJhIjoiY21qMDJvajJqMDN0azNlcXpwbmllNmt6ZSJ9.1dYovPj0P4mukRYCXjSgrw";
 
