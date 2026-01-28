@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>SEAMLINE WEB 0.9</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="./config.js"></script>
+    <link rel="stylesheet" href="./styles/main.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="icon-button" onclick="history.back()">←</button>
+      </div>
+      <div class="topbar-center" id="home-title">SEAMLINE WEB 0.9</div>
+      <div class="topbar-right"></div>
+    </header>
+
+    <main class="simple-page">
+      <section class="about-section">
+        <h2>About</h2>
+        <p>Scrolling. Comparing. Ego-maxing. Saving posts. Saving sewing guides. Saving “inspiration” you’ll never open again. It feels like doing something. It isn’t.</p>
+        <p>Seamline was created to get you outside. Touch some grass. Feel some actual fabric. Find small shops you didn’t know existed.</p>
+        <p>It’s a directory that gets you off your phone and into the real world. Fabric shops, suppliers, tailors. Places and people fashion is built on and depends on.</p>
+        <p>Seamline is a starting point. Pick a place. Go there. Touch the fabric. Make something.</p>
+        <p>We’re not here for aesthetic posturing. Seamline helps you find fabric shops so you can start making clothes. Simple as.</p>
+        <p>Because as we all know fashion students are the most important people in the world.</p>
+        <p>They know everything about everything.</p>
+        <p>And without them, especially the East London creatives, civilisation would collapse.</p>
+        <p>Less content. Less ego. Less gatekeeping.</p>
+        <p>Make something.</p>
+        <img
+          src="./visual/about.jpg"
+          alt="Stick figure prodding the ground with the caption “C’mon, do something.”"
+          class="about-image"
+        />
+      </section>
+    </main>
+
+    <script type="module">
+      document.getElementById("home-title")?.addEventListener("click", () => {
+        window.location.href = "index.html";
+      });
+    </script>
+  </body>
+</html>

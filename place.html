@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>SEAMLINE WEB 0.9</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="./config.js"></script>
+    <link rel="stylesheet" href="./styles/main.css" />
+  </head>
+
+  <body class="page-place">
+    <!-- Side menu -->
+    <div id="menu-overlay" class="menu-overlay hidden"></div>
+    <nav id="side-menu" class="side-menu" aria-hidden="true">
+      <div class="side-menu-inner">
+        <a class="menu-item" href="index.html">Home (Map)</a>
+        <a class="menu-item" href="list.html">List view</a>
+        <a class="menu-item" href="search.html">Search</a>
+        <a class="menu-item" href="saved.html">Saved places</a>
+        <a class="menu-item" href="submit.html">Submit a place</a>
+        <a class="menu-item" href="about.html">About</a>
+        <a class="menu-item" id="account-menu-link" href="account.html">Log in / Sign up</a>
+      </div>
+    </nav>
+
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <button id="menu-button" class="icon-button" aria-label="Menu">☰</button>
+      </div>
+
+      <div class="topbar-center" id="home-title">SEAMLINE WEB 0.9</div>
+
+      <div class="topbar-right"></div>
+    </header>
+
+    <main id="place">
+      <div class="place-header">
+        <div class="place-header-left">
+          <h2 id="place-name"></h2>
+          <button id="place-category" class="category-link" type="button"></button>
+        </div>
+        <div class="place-header-right">
+          <button id="save-place-btn" class="secondary-btn" type="button">Save place</button>
+        </div>
+      </div>
+
+      <p id="place-description"></p>
+
+      <div id="place-gallery" class="gallery hidden"></div>
+
+      <div class="place-meta">
+        <div class="place-address">
+          <a id="place-address" href="" target="_blank" rel="noopener"></a>
+        </div>
+
+        <div class="place-website">
+          <a id="place-website" href="" target="_blank" rel="noopener"></a>
+        </div>
+
+        <div class="place-phone">
+          <a id="place-phone" href=""></a>
+        </div>
+
+        <div class="place-hours" id="place-hours"></div>
+      </div>
+    </main>
+
+    <script type="module" src="./src/place.js"></script>
+  </body>
+</html>

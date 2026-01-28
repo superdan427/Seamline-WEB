@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>SEAMLINE WEB 0.9 – Search</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="./config.js"></script>
+    <link rel="stylesheet" href="./styles/main.css" />
+  </head>
+
+  <body class="page-search">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="icon-button" onclick="history.back()" aria-label="Back">←</button>
+      </div>
+
+      <div class="topbar-center" id="home-title">SEAMLINE WEB 0.9</div>
+
+      <div class="topbar-right"></div>
+    </header>
+
+    <main>
+      <div id="search-coming-soon" class="search-coming-soon hidden">
+        <div class="account-card">
+          <h2>Search is coming soon</h2>
+          <p class="muted">
+            We’re finishing up the smarter search tools. Check back shortly for tag + keyword search
+            across every Seamline place.
+          </p>
+        </div>
+      </div>
+
+      <div id="search-app">
+        <section class="search-hero">
+          <h2>Search Seamline</h2>
+          <p>find fabrics, shops, places, or just your purpose in life using the search bar below.</p>
+        </section>
+
+        <section class="account-card">
+          <div class="search-bar">
+            <input
+              type="search"
+              id="search-input"
+              placeholder="Try “silk”, “denim”, “trimmings”…"
+              aria-label="Search places"
+            />
+            <button type="button" class="search-clear" id="clear-search" aria-label="Clear search">
+              ×
+            </button>
+          </div>
+
+          <div class="tag-filters hidden" id="tag-filters" aria-label="Tag filters"></div>
+        </section>
+
+        <section class="account-card">
+          <div id="search-summary" class="muted"></div>
+          <div class="search-results" id="search-results"></div>
+        </section>
+      </div>
+    </main>
+
+    <script type="module" src="./src/search.js"></script>
+  </body>
+</html>

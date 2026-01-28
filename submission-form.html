@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Submit a Place</title>
+    <style>
+      body {
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        line-height: 1.4;
+        padding: 2rem;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+      form {
+        display: grid;
+        gap: 1rem;
+      }
+      label {
+        font-weight: 600;
+      }
+      input,
+      textarea,
+      button {
+        width: 100%;
+        padding: 0.6rem;
+        font: inherit;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+      button {
+        cursor: pointer;
+        background: #000;
+        color: #fff;
+      }
+      #status {
+        min-height: 1.2em;
+      }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="./config.js"></script>
+  </head>
+  <body>
+    <h1>Suggest a Place</h1>
+    <form id="submission-form">
+      <div>
+        <label for="name">Name * <small>(2-200 characters)</small></label>
+        <input id="name" name="name" type="text" required minlength="2" maxlength="200" />
+      </div>
+      <div>
+        <label for="website">Website</label>
+        <input id="website" name="website" type="url" placeholder="https://example.com" />
+      </div>
+      <div>
+        <label for="submitter_email">Your Email</label>
+        <input id="submitter_email" name="submitter_email" type="email" placeholder="you@example.com" />
+      </div>
+      <div>
+        <label for="more_info">More Info <small>(max 1000 characters)</small></label>
+        <textarea id="more_info" name="more_info" rows="4" maxlength="1000"></textarea>
+      </div>
+      <button type="submit">Submit</button>
+      <p id="status"></p>
+    </form>
+
+    <script type="module">
+      // Security: Use config.js for Supabase credentials
+      const supabase = window.supabase.createClient(
+        window.SUPABASE_URL,
+        window.SUPABASE_ANON_KEY
+      );
+
+      // Import validation utilities
+      import { validateName, validateUrl, validateEmail, validateText } from './utils/validator.js';
+
+      const form = document.getElementById("submission-form");
+      const statusEl = document.getElementById("status");
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        statusEl.textContent = "Submitting…";
+        statusEl.style.color = "";
+
+        const formData = new FormData(form);
+
+        try {
+          // Security: Validate all inputs before submission
+          const name = validateName(formData.get("name"), 2, 200);
+
+          // Validate website URL (optional field)
+          const websiteInput = (formData.get("website") || "").trim();
+          const website = websiteInput ? validateUrl(websiteInput, false) : null;
+
+          // Validate email (optional field)
+          const emailInput = (formData.get("submitter_email") || "").trim();
+          const submitter_email = emailInput ? validateEmail(emailInput) : null;
+
+          // Validate additional info (optional field)
+          const more_info = validateText(formData.get("more_info"), 1000, false);
+
+          const payload = {
+            name,
+            website,
+            submitter_email,
+            more_info,
+          };
+
+          const { error } = await supabase.from("place_submissions").insert(payload);
+          if (error) throw error;
+
+          form.reset();
+          statusEl.textContent = "✓ Submitted successfully! We'll review it soon.";
+          statusEl.style.color = "green";
+        } catch (err) {
+          console.error("Submission error:", err);
+
+          // Display specific validation error or generic error
+          statusEl.textContent = err.message || "Something went wrong. Please try again.";
+          statusEl.style.color = "red";
+        }
+      });
+    </script>
+  </body>
+</html>

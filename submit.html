@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Submit a Place - SEAMLINE WEB</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="./config.js"></script>
+    <link rel="stylesheet" href="./styles/main.css" />
+    <style>
+      .submit-container {
+        max-width: 700px;
+        margin: 2rem auto;
+        padding: 2rem;
+      }
+
+      .submit-form {
+        background: white;
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+
+      .form-group label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: #333;
+      }
+
+      .form-group small {
+        color: #666;
+        font-size: 0.875rem;
+        font-weight: normal;
+      }
+
+      .form-group input,
+      .form-group select,
+      .form-group textarea {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 1rem;
+        font-family: inherit;
+        box-sizing: border-box;
+      }
+
+      .form-group input:focus,
+      .form-group select:focus,
+      .form-group textarea:focus {
+        outline: none;
+        border-color: #000;
+      }
+
+      .form-group textarea {
+        resize: vertical;
+        min-height: 80px;
+      }
+
+      .form-hint {
+        display: block;
+        margin-top: 0.25rem;
+        font-size: 0.875rem;
+        color: #666;
+      }
+
+      .char-count {
+        display: block;
+        margin-top: 0.25rem;
+        font-size: 0.875rem;
+        color: #666;
+        text-align: right;
+      }
+
+      .char-count.warning {
+        color: #ff6b00;
+      }
+
+      .char-count.error {
+        color: #dc3545;
+      }
+
+      .form-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+      }
+
+      .btn {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 4px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .btn-primary {
+        background: #000;
+        color: #fff;
+      }
+
+      .btn-primary:hover:not(:disabled) {
+        background: #333;
+      }
+
+      .btn-primary:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+      }
+
+      .btn-secondary {
+        background: #f0f0f0;
+        color: #333;
+      }
+
+      .btn-secondary:hover {
+        background: #e0e0e0;
+      }
+
+      details {
+        margin-top: 1.5rem;
+        padding: 1rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        background: #f9f9f9;
+      }
+
+      summary {
+        cursor: pointer;
+        font-weight: 600;
+        padding: 0.5rem;
+        user-select: none;
+      }
+
+      summary:hover {
+        color: #000;
+      }
+
+      .tags-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+      }
+
+      .tags-container label {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: normal;
+        cursor: pointer;
+      }
+
+      .tags-container input[type="checkbox"] {
+        width: auto;
+        cursor: pointer;
+      }
+
+      .success-message {
+        text-align: center;
+        padding: 3rem;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .success-message h2 {
+        color: #28a745;
+        margin-bottom: 1rem;
+      }
+
+      .success-message a {
+        display: inline-block;
+        margin-top: 1rem;
+        padding: 0.75rem 1.5rem;
+        background: #000;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 4px;
+      }
+
+      .success-message a:hover {
+        background: #333;
+      }
+
+      .error-message {
+        padding: 1rem;
+        margin-bottom: 1rem;
+        background: #fff5f5;
+        border: 1px solid #dc3545;
+        border-radius: 4px;
+        color: #dc3545;
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      .back-link {
+        display: inline-block;
+        margin-bottom: 1rem;
+        color: #666;
+        text-decoration: none;
+      }
+
+      .back-link:hover {
+        color: #000;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Side menu -->
+    <div id="menu-overlay" class="menu-overlay hidden"></div>
+    <nav id="side-menu" class="side-menu" aria-hidden="true">
+      <div class="side-menu-inner">
+        <a class="menu-item" href="index.html">Home (Map)</a>
+        <a class="menu-item" href="list.html">List view</a>
+        <a class="menu-item" href="search.html">Search</a>
+        <a class="menu-item" href="saved.html">Saved places</a>
+        <a class="menu-item" href="submit.html">Submit a place</a>
+        <a class="menu-item" href="about.html">About</a>
+        <a class="menu-item" id="account-menu-link" href="account.html">Log in / Sign up</a>
+      </div>
+    </nav>
+
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <button id="menu-button" class="icon-button" aria-label="Menu">☰</button>
+      </div>
+
+      <div class="topbar-center" id="home-title">SEAMLINE WEB 0.9</div>
+
+      <div class="topbar-right"></div>
+    </header>
+
+    <div class="submit-container">
+
+      <div id="form-container">
+        <h1>Submit a Place</h1>
+        <p>
+          Know a great fabric shop, leather supplier, or sewing service? Share
+          it with the community!
+        </p>
+
+        <div id="error-container" class="error-message hidden"></div>
+
+        <form id="submit-form" class="submit-form">
+          <!-- Required Fields -->
+          <div class="form-group">
+            <label for="name">Place Name * <small>(2-200 characters)</small></label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              required
+              minlength="2"
+              maxlength="200"
+              placeholder="e.g., Whaleys Bradford"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="category">Category *</label>
+            <select id="category" name="category" required>
+              <option value="">Select a category...</option>
+              <option value="Fabric Shop">Fabric Shop</option>
+              <option value="Leather">Leather</option>
+              <option value="Services">Services</option>
+              <option value="Trimming">Trimming</option>
+              <option value="Knit/Embroidery">Knit/Embroidery</option>
+              <option value="Markets">Markets</option>
+              <option value="Online">Online</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="address">Address *</label>
+            <input
+              type="text"
+              id="address"
+              name="address"
+              required
+              placeholder="e.g., 123 High St, London E1 6AN"
+            />
+            <small class="form-hint"
+              >We'll use this to add the location to the map</small
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="website">Website</label>
+            <input
+              type="url"
+              id="website"
+              name="website"
+              placeholder="https://example.com"
+            />
+            <small class="form-hint">Optional</small>
+          </div>
+
+          <div class="form-group">
+            <label for="phone">Phone</label>
+            <input
+              type="tel"
+              id="phone"
+              name="phone"
+              placeholder="020 1234 5678"
+            />
+            <small class="form-hint">Optional</small>
+          </div>
+
+          <div class="form-group">
+            <label for="pop_up"
+              >What do you like about this place? * <small>(100-200 characters)</small></label
+            >
+            <textarea
+              id="pop_up"
+              name="pop_up"
+              rows="3"
+              required
+              minlength="100"
+              maxlength="200"
+              placeholder="Tell us what makes this shop special - the fabric selection, helpful staff, unique materials..."
+            ></textarea>
+            <span id="char-count" class="char-count">0 / 200 characters</span>
+          </div>
+
+          <!-- Optional Fields -->
+          <details>
+            <summary>Optional Details (expand for more fields)</summary>
+
+            <div class="form-group">
+              <label for="opening_hours">Opening Hours</label>
+              <textarea
+                id="opening_hours"
+                name="opening_hours"
+                rows="6"
+                placeholder="Monday: 9am-5pm&#10;Tuesday: 9am-5pm&#10;Wednesday: 9am-5pm&#10;Thursday: 9am-5pm&#10;Friday: 9am-5pm&#10;Saturday: Closed&#10;Sunday: Closed"
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="average_price">What are the prices like there?</label>
+              <input
+                type="text"
+                id="average_price"
+                name="average_price"
+                maxlength="100"
+                placeholder="e.g., £5-15/meter, Budget-friendly, Mid-range, Premium..."
+              />
+              <small class="form-hint">Help others know what to expect - approximate price per meter, or just give a sense of the price range</small>
+            </div>
+          </details>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" id="submit-btn">
+              Submit Place
+            </button>
+            <button
+              type="button"
+              class="btn btn-secondary"
+              onclick="window.history.back()"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div id="success-message" class="success-message hidden">
+        <h2>✅ Submission Received!</h2>
+        <p>
+          Thank you for submitting a place. We'll review it and add it to the
+          map soon.
+        </p>
+        <a href="index.html">Back to Map</a>
+        <br />
+        <a href="submit.html" style="margin-top: 1rem; background: #f0f0f0; color: #333"
+          >Submit Another Place</a
+        >
+      </div>
+    </div>
+
+    <script type="module">
+      import { setupMenu } from "./src/menu.js";
+
+      // Setup menu
+      setupMenu();
+
+      // Clickable title to return home
+      document.getElementById("home-title")?.addEventListener("click", () => {
+        window.location.href = "index.html";
+      });
+    </script>
+    <script type="module" src="./src/submit.js"></script>
+  </body>
+</html>

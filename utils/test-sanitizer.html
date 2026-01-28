@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sanitizer Test Suite</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+
+    h1 {
+      color: #333;
+      border-bottom: 3px solid #007bff;
+      padding-bottom: 10px;
+    }
+
+    .test-section {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 20px 0;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .test-case {
+      margin: 15px 0;
+      padding: 15px;
+      border-left: 4px solid #ddd;
+      background: #fafafa;
+    }
+
+    .test-case.pass {
+      border-left-color: #28a745;
+      background: #f0fff4;
+    }
+
+    .test-case.fail {
+      border-left-color: #dc3545;
+      background: #fff5f5;
+    }
+
+    .test-name {
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .test-details {
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      color: #666;
+    }
+
+    .pass-icon { color: #28a745; }
+    .fail-icon { color: #dc3545; }
+
+    .summary {
+      background: #007bff;
+      color: white;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+      font-size: 18px;
+      margin-top: 30px;
+    }
+
+    .interactive-test {
+      margin-top: 30px;
+      padding: 20px;
+      background: #fff3cd;
+      border-radius: 8px;
+      border: 2px solid #ffc107;
+    }
+
+    .interactive-test input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .interactive-test button {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .interactive-test button:hover {
+      background: #0056b3;
+    }
+
+    .output {
+      margin-top: 15px;
+      padding: 15px;
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      min-height: 50px;
+    }
+
+    .dangerous {
+      color: #dc3545;
+      font-weight: bold;
+    }
+
+    .safe {
+      color: #28a745;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>🔐 Sanitization Utility Test Suite</h1>
+  <p>This page tests the security sanitization utilities to ensure they properly prevent XSS attacks.</p>
+
+  <div id="test-results"></div>
+
+  <div class="interactive-test">
+    <h2>🧪 Interactive XSS Test</h2>
+    <p>Try to inject malicious code (it will be safely blocked):</p>
+    <input type="text" id="xss-input" placeholder="Try: <script>alert('XSS')</script>" />
+    <button onclick="testUserInput()">Test Sanitization</button>
+
+    <h3>Results:</h3>
+    <div class="output" id="output-unsafe">
+      <strong class="dangerous">❌ UNSAFE (innerHTML without escaping):</strong>
+      <div id="unsafe-content"></div>
+    </div>
+
+    <div class="output" id="output-safe">
+      <strong class="safe">✅ SAFE (with escapeHtml):</strong>
+      <div id="safe-content"></div>
+    </div>
+
+    <div class="output" id="output-safest">
+      <strong class="safe">✅ SAFEST (textContent):</strong>
+      <div id="safest-content"></div>
+    </div>
+  </div>
+
+  <script type="module">
+    import {
+      escapeHtml,
+      sanitizeUrl,
+      stripHtmlTags,
+      sanitizeAttribute,
+      createSafeElement,
+      createSafeImage,
+      createSafeLink,
+      validateSafeString,
+      sanitizePhotoArray,
+      __testSanitizer
+    } from './sanitizer.js';
+
+    // Run automated tests
+    function runTests() {
+      const resultsDiv = document.getElementById('test-results');
+
+      // Define test cases
+      const testCases = [
+        {
+          name: 'XSS via <script> tag',
+          input: '<script>alert("XSS")</script>',
+          test: () => {
+            const result = escapeHtml('<script>alert("XSS")</script>');
+            return !result.includes('<script>') && result.includes('&lt;script&gt;');
+          }
+        },
+        {
+          name: 'XSS via <img> onerror',
+          input: '<img src=x onerror="alert(1)">',
+          test: () => {
+            const result = escapeHtml('<img src=x onerror="alert(1)">');
+            return !result.includes('<img') && result.includes('&lt;img');
+          }
+        },
+        {
+          name: 'JavaScript protocol in URL',
+          input: 'javascript:alert("XSS")',
+          test: () => {
+            const result = sanitizeUrl('javascript:alert("XSS")');
+            return result === '';
+          }
+        },
+        {
+          name: 'Data URI blocking',
+          input: 'data:text/html,<script>alert(1)</script>',
+          test: () => {
+            const result = sanitizeUrl('data:text/html,<script>alert(1)</script>');
+            return result === '';
+          }
+        },
+        {
+          name: 'Safe HTTPS URL',
+          input: 'https://example.com',
+          test: () => {
+            const result = sanitizeUrl('https://example.com');
+            return result === 'https://example.com';
+          }
+        },
+        {
+          name: 'Auto-add HTTPS to bare domain',
+          input: 'example.com',
+          test: () => {
+            const result = sanitizeUrl('example.com');
+            return result === 'https://example.com';
+          }
+        },
+        {
+          name: 'Strip HTML tags',
+          input: '<b>Hello</b> <script>alert(1)</script>World',
+          test: () => {
+            const result = stripHtmlTags('<b>Hello</b> <script>alert(1)</script>World');
+            return result === 'Hello World' && !result.includes('<');
+          }
+        },
+        {
+          name: 'Attribute sanitization',
+          input: 'foo" onclick="alert(1)"',
+          test: () => {
+            const result = sanitizeAttribute('foo" onclick="alert(1)"');
+            return !result.includes('onclick') && result.includes('&quot;');
+          }
+        },
+        {
+          name: 'createSafeElement escapes content',
+          input: '<script>alert(1)</script>',
+          test: () => {
+            const el = createSafeElement('div', '<script>alert(1)</script>');
+            return el.textContent === '<script>alert(1)</script>' && !el.innerHTML.includes('<script>');
+          }
+        },
+        {
+          name: 'createSafeImage blocks javascript: URLs',
+          input: 'javascript:alert(1)',
+          test: () => {
+            const img = createSafeImage('javascript:alert(1)');
+            return !img.src.includes('javascript:');
+          }
+        },
+        {
+          name: 'createSafeLink blocks dangerous URLs',
+          input: 'javascript:alert(1)',
+          test: () => {
+            const link = createSafeLink('javascript:alert(1)', 'Click me');
+            return link.href.includes('#') || !link.href.includes('javascript:');
+          }
+        },
+        {
+          name: 'validateSafeString blocks HTML',
+          input: '<script>alert(1)</script>',
+          test: () => {
+            try {
+              validateSafeString('<script>alert(1)</script>');
+              return false; // Should have thrown
+            } catch (err) {
+              return err.message.includes('HTML tags') || err.message.includes('Script content');
+            }
+          }
+        },
+        {
+          name: 'sanitizePhotoArray filters bad URLs',
+          input: ['javascript:alert(1)', 'https://example.com/photo.jpg', 'data:text/html,<script>'],
+          test: () => {
+            const result = sanitizePhotoArray(['javascript:alert(1)', 'https://example.com/photo.jpg', 'data:text/html,<script>']);
+            return result.length === 1 && result[0] === 'https://example.com/photo.jpg';
+          }
+        }
+      ];
+
+      // Run tests
+      let passed = 0;
+      let failed = 0;
+      let html = '<div class="test-section"><h2>Automated Test Results</h2>';
+
+      testCases.forEach((testCase, index) => {
+        try {
+          const result = testCase.test();
+          if (result) {
+            passed++;
+            html += `
+              <div class="test-case pass">
+                <div class="test-name">
+                  <span class="pass-icon">✅</span> Test ${index + 1}: ${testCase.name}
+                </div>
+                <div class="test-details">Input: ${escapeHtml(String(testCase.input))}</div>
+              </div>
+            `;
+          } else {
+            failed++;
+            html += `
+              <div class="test-case fail">
+                <div class="test-name">
+                  <span class="fail-icon">❌</span> Test ${index + 1}: ${testCase.name}
+                </div>
+                <div class="test-details">Input: ${escapeHtml(String(testCase.input))}</div>
+                <div class="test-details">Expected: Pass, Got: Fail</div>
+              </div>
+            `;
+          }
+        } catch (err) {
+          failed++;
+          html += `
+            <div class="test-case fail">
+              <div class="test-name">
+                <span class="fail-icon">❌</span> Test ${index + 1}: ${testCase.name}
+              </div>
+              <div class="test-details">Input: ${escapeHtml(String(testCase.input))}</div>
+              <div class="test-details">Error: ${escapeHtml(err.message)}</div>
+            </div>
+          `;
+        }
+      });
+
+      html += '</div>';
+
+      // Add summary
+      html += `
+        <div class="summary">
+          <strong>Test Summary:</strong><br>
+          ✅ Passed: ${passed} | ❌ Failed: ${failed} | Total: ${testCases.length}
+          ${failed === 0 ? '<br><br>🎉 All security tests passed!' : '<br><br>⚠️ Some tests failed - review security measures'}
+        </div>
+      `;
+
+      resultsDiv.innerHTML = html;
+    }
+
+    // Interactive test function
+    window.testUserInput = function() {
+      const input = document.getElementById('xss-input').value;
+
+      // UNSAFE: Direct innerHTML (demonstrates vulnerability)
+      const unsafeDiv = document.getElementById('unsafe-content');
+      try {
+        // This is intentionally unsafe for demonstration
+        unsafeDiv.innerHTML = input;
+      } catch (err) {
+        unsafeDiv.textContent = 'Error: ' + err.message;
+      }
+
+      // SAFE: Using escapeHtml
+      const safeDiv = document.getElementById('safe-content');
+      safeDiv.innerHTML = escapeHtml(input);
+
+      // SAFEST: Using textContent
+      const safestDiv = document.getElementById('safest-content');
+      safestDiv.textContent = input;
+    };
+
+    // Make escapeHtml available globally for the interactive test
+    window.escapeHtml = escapeHtml;
+
+    // Run tests on page load
+    runTests();
+  </script>
+</body>
+</html>
