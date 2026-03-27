@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import mapboxgl from 'mapbox-gl';
 import Topbar from '@/components/Topbar';
 import { supabase } from '@/lib/supabase';
 import { isOnlinePlace, getCategoriesFromPlaces, filterPlacesByCategory } from '@/lib/filters';
@@ -16,6 +15,7 @@ export default function HomePage() {
   const user = useAuth();
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
+  const mapboxglRef = useRef(null);
   const markersRef = useRef([]);
   const userMarkerRef = useRef(null);
   const userCoordsRef = useRef(null);
@@ -27,17 +27,21 @@ export default function HomePage() {
 
   // ── Mapbox init ──────────────────────────────────────────────────────────
   useEffect(() => {
-    mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
-
-    const map = new mapboxgl.Map({
-      container: mapContainerRef.current,
-      style: 'mapbox://styles/mapbox/light-v11',
-      center: [-0.1276, 51.5072],
-      zoom: 11,
-      interactive: true,
+    let map;
+    import('mapbox-gl').then((mod) => {
+      const mapboxgl = mod.default || mod;
+      mapboxglRef.current = mapboxgl;
+      mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
+      map = new mapboxgl.Map({
+        container: mapContainerRef.current,
+        style: 'mapbox://styles/mapbox/light-v11',
+        center: [-0.1276, 51.5072],
+        zoom: 11,
+        interactive: true,
+      });
+      map.addControl(new mapboxgl.NavigationControl(), 'bottom-right');
+      mapRef.current = map;
     });
-    map.addControl(new mapboxgl.NavigationControl(), 'bottom-right');
-    mapRef.current = map;
 
     return () => {
       map?.remove();
@@ -61,14 +65,14 @@ export default function HomePage() {
 
   // ── Draw markers when places or dark mode changes ─────────────────────────
   useEffect(() => {
-    if (!mapRef.current || allPlaces.length === 0) return;
+    if (!mapRef.current || !mapboxglRef.current || allPlaces.length === 0) return;
 
-    updateMarkers(allPlaces);
-    requestUserLocation(mapboxgl);
+    updateMarkers(allPlaces, mapboxglRef.current);
+    requestUserLocation(mapboxglRef.current);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allPlaces]);
 
-  function updateMarkers(places) {
+  function updateMarkers(places, mapboxgl) {
     // Remove old markers
     markersRef.current.forEach((m) => m.remove());
     markersRef.current = [];
@@ -112,11 +116,11 @@ export default function HomePage() {
   }
 
   // ── Dark mode toggle ──────────────────────────────────────────────────────
-  function toggleDarkMode() {
+  function toggleDarkMode(mapboxgl) {
     const next = !isDarkMode;
     setIsDarkMode(next);
     document.body.classList.toggle('dark-mode', next);
-    if (mapRef.current) {
+    if (mapRef.current && mapboxgl) {
       mapRef.current.setStyle(
         next ? 'mapbox://styles/mapbox/dark-v11' : 'mapbox://styles/mapbox/light-v11'
       );
@@ -137,7 +141,8 @@ export default function HomePage() {
   function handleFilterSelect(category) {
     setActiveCategory(category);
     const filtered = filterPlacesByCategory(allPlaces, category);
-    updateMarkers(filtered);
+    if (!mapboxglRef.current) return;
+    updateMarkers(filtered, mapboxglRef.current);
   }
 
   // ── Modal save logic ──────────────────────────────────────────────────────
@@ -199,7 +204,7 @@ export default function HomePage() {
             aria-label="Toggle dark mode"
             aria-pressed={String(isDarkMode)}
             type="button"
-            onClick={toggleDarkMode}
+            onClick={() => toggleDarkMode(mapboxglRef.current)}
           >
             {isDarkMode ? 'Light' : 'Dark'}
           </button>
