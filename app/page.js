@@ -63,36 +63,29 @@ export default function HomePage() {
   useEffect(() => {
     if (!mapRef.current || allPlaces.length === 0) return;
 
-    let mapboxgl;
-    import('mapbox-gl').then((mod) => {
-      mapboxgl = mod.default || mod;
-      updateMarkers(allPlaces);
-      requestUserLocation(mapboxgl);
-    });
+    updateMarkers(allPlaces);
+    requestUserLocation(mapboxgl);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allPlaces]);
 
   function updateMarkers(places) {
-    import('mapbox-gl').then((mod) => {
-      const mapboxgl = mod.default || mod;
-      // Remove old markers
-      markersRef.current.forEach((m) => m.remove());
-      markersRef.current = [];
+    // Remove old markers
+    markersRef.current.forEach((m) => m.remove());
+    markersRef.current = [];
 
-      places.forEach((place) => {
-        if (typeof place.lng !== 'number' || typeof place.lat !== 'number') return;
-        const el = document.createElement('div');
-        el.className = 'custom-marker';
-        el.addEventListener('click', (e) => {
-          e.stopPropagation();
-          mapRef.current?.flyTo({ center: [place.lng, place.lat], zoom: 14 });
-          setModal(place);
-        });
-        const marker = new mapboxgl.Marker(el)
-          .setLngLat([place.lng, place.lat])
-          .addTo(mapRef.current);
-        markersRef.current.push(marker);
+    places.forEach((place) => {
+      if (typeof place.lng !== 'number' || typeof place.lat !== 'number') return;
+      const el = document.createElement('div');
+      el.className = 'custom-marker';
+      el.addEventListener('click', (e) => {
+        e.stopPropagation();
+        mapRef.current?.flyTo({ center: [place.lng, place.lat], zoom: 14 });
+        setModal(place);
       });
+      const marker = new mapboxgl.Marker(el)
+        .setLngLat([place.lng, place.lat])
+        .addTo(mapRef.current);
+      markersRef.current.push(marker);
     });
   }
 
@@ -129,15 +122,12 @@ export default function HomePage() {
       );
       if (userCoordsRef.current) {
         mapRef.current.once('style.load', () => {
-          import('mapbox-gl').then((mod) => {
-            const mapboxgl = mod.default || mod;
-            userMarkerRef.current?.remove();
-            const el = document.createElement('div');
-            el.className = 'user-location-marker';
-            userMarkerRef.current = new mapboxgl.Marker(el)
-              .setLngLat([userCoordsRef.current.lng, userCoordsRef.current.lat])
-              .addTo(mapRef.current);
-          });
+          userMarkerRef.current?.remove();
+          const el = document.createElement('div');
+          el.className = 'user-location-marker';
+          userMarkerRef.current = new mapboxgl.Marker(el)
+            .setLngLat([userCoordsRef.current.lng, userCoordsRef.current.lat])
+            .addTo(mapRef.current);
         });
       }
     }
