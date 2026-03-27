@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import mapboxgl from 'mapbox-gl';
 import Topbar from '@/components/Topbar';
 import { supabase } from '@/lib/supabase';
 import { isOnlinePlace, getCategoriesFromPlaces, filterPlacesByCategory } from '@/lib/filters';
@@ -26,21 +27,17 @@ export default function HomePage() {
 
   // ── Mapbox init ──────────────────────────────────────────────────────────
   useEffect(() => {
-    let map;
-    import('mapbox-gl').then((mapboxgl) => {
-      mapboxgl = mapboxgl.default || mapboxgl;
-      mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
+    mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
-      map = new mapboxgl.Map({
-        container: mapContainerRef.current,
-        style: 'mapbox://styles/mapbox/light-v11',
-        center: [-0.1276, 51.5072],
-        zoom: 11,
-        interactive: true,
-      });
-      map.addControl(new mapboxgl.NavigationControl(), 'bottom-right');
-      mapRef.current = map;
+    const map = new mapboxgl.Map({
+      container: mapContainerRef.current,
+      style: 'mapbox://styles/mapbox/light-v11',
+      center: [-0.1276, 51.5072],
+      zoom: 11,
+      interactive: true,
     });
+    map.addControl(new mapboxgl.NavigationControl(), 'bottom-right');
+    mapRef.current = map;
 
     return () => {
       map?.remove();
