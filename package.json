@@ -9,9 +9,14 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.100.1",
+    "autoprefixer": "^10.4.27",
+    "mapbox-gl": "^3.20.0",
+    "next": "14.2.35",
+    "postcss": "^8.5.8",
     "react": "^18",
     "react-dom": "^18",
-    "next": "14.2.35"
+    "tailwindcss": "^3.4.19"
   },
   "devDependencies": {
     "eslint": "^8",
