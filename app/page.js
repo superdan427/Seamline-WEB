@@ -81,7 +81,11 @@ export default function HomePage() {
       .order('name')
       .then(({ data: places, error }) => {
         if (error || !places) return;
-        const filtered = places.filter((p) => !isOnlinePlace(p));
+        const filtered = places.filter((p) => 
+  !isOnlinePlace(p) && 
+  Array.isArray(p.photos) && 
+  p.photos.length > 0
+);
         setAllPlaces(filtered);
         setCategories(getCategoriesFromPlaces(filtered));
       });
@@ -166,6 +170,7 @@ export default function HomePage() {
     if (!mapboxglRef.current) return;
     updateMarkers(filtered, mapboxglRef.current);
   }
+  
 
   // ── Keyboard navigation for card carousel ────────────────────────────────
   useEffect(() => {
