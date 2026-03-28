@@ -21,8 +21,8 @@ export default function Topbar({ overlay = false, right = null }) {
             src="/seamline-logo.png"
             alt="Seamline"
             width={150}
-            height={44}
-            style={{ objectFit: 'contain' }}
+            height={30}
+            style={{ objectFit: 'contain',  marginTop: '-24px'  }}
             priority
           />
         </Link>

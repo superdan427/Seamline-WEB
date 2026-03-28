@@ -195,8 +195,6 @@ export default function PlacePage() {
           </>
         )}
 
-        <hr className="divider" />
-
         <div className="place-meta">
           {/* Address */}
           {!onlineOnly && place.address && typeof place.lat === 'number' && typeof place.lng === 'number' && (

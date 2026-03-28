@@ -8,20 +8,28 @@ export default function AboutPage() {
   return (
     <div>
       <Topbar />
-      <main className="simple-page">
-        <h1>About Seamline</h1>
-        <p>
-          Seamline is a directory for discovering fabric shops, leather suppliers, trimmings, and
-          sewing services across London.
+      <main className="about-page">
+
+        <p className="about-hook">
+          Scrolling. Comparing. Saving inspiration you'll never open again.
+          It feels like doing something. It isn't.
         </p>
-        <p>
-          We built it as an alternative to browsing social media hashtags and hoping the algorithm
-          surfaces the right shop. Every listing is manually reviewed before it goes on the map.
+
+        <p className="about-body">
+          Seamline gets you outside. Find small shops you didn't know existed and feel the materials.
+
+          A directory of fabric shops, suppliers, tailors. The places fashion is actually built on.
+          Pick a place. Go there. Touch the fabric. Make something.
         </p>
-        <p>
-          Know a place we&apos;re missing?{' '}
-          <a href="/submit">Submit it here</a>.
+        <p className="about-stamp">
+          Less content. Less ego. Less gatekeeping.
         </p>
+
+        <p className="about-stamp">
+          Know a place we&apos;re missing?{' '}  </p>
+        <p className ="about-submit"> <a href="/submit">Submit it here </a>. </p>
+
+
       </main>
     </div>
   );
