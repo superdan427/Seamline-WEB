@@ -1270,3 +1270,128 @@ body {
   background: currentColor;
   flex-shrink: 0;
 }
+
+/* =========================
+   SUBMIT FORM
+   ========================= */
+
+.submit-container {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 24px 20px 80px;
+}
+
+.submit-auth-gate {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+  gap: 14px;
+  text-align: center;
+  padding: 20px;
+}
+
+.submit-success {
+  padding: 40px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.submit-error {
+  margin-bottom: 16px;
+  padding: 10px 0;
+  color: #c00;
+  font-size: 0.875rem;
+}
+
+/* Field wrapper */
+.form-field {
+  padding: 14px 0 6px;
+}
+
+/* Label — small uppercase track */
+.form-label {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: #888;
+  margin-bottom: 6px;
+}
+
+/* Underline-only inputs */
+.form-input {
+  width: 100%;
+  border: none;
+  border-bottom: 1px solid #e5e5e5;
+  border-radius: 0;
+  padding: 8px 0;
+  font-size: 0.95rem;
+  font-family: inherit;
+  background: transparent;
+  outline: none;
+  box-sizing: border-box;
+  color: #111;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.form-input:focus {
+  border-bottom-color: #333;
+}
+
+textarea.form-input {
+  resize: vertical;
+  min-height: 72px;
+}
+
+.form-hint {
+  display: block;
+  margin-top: 5px;
+  font-size: 0.78rem;
+  color: #bbb;
+}
+
+/* Character counter */
+.form-char-count {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.75rem;
+  color: #ccc;
+  text-align: right;
+}
+
+.form-char-count.warning {
+  color: #ff6b00;
+}
+
+.form-char-count.error {
+  color: #c00;
+}
+
+/* Full-width submit button */
+.submit-btn {
+  width: 100%;
+  background: #111;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 14px;
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  min-height: 44px;
+}
+
+.submit-btn:hover:not(:disabled) {
+  background: #333;
+}
+
+.submit-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
