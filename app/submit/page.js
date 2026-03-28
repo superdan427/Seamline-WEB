@@ -107,7 +107,13 @@ export default function SubmitPage() {
         .select()
         .single();
 
-      if (insertError) throw new Error(insertError.message || 'Failed to submit. Please try again.');
+      if (insertError) {
+        if (insertError.message?.includes('Rate limit exceeded')) {
+          setError('You can only submit 5 places per 24 hours. Please try again later.');
+          return;
+        }
+        throw new Error(insertError.message || 'Failed to submit. Please try again.');
+      }
 
       setSubmitted(true);
       window.scrollTo({ top: 0, behavior: 'smooth' });
