@@ -31,7 +31,7 @@ function orderCategories(categories) {
 
 export default function ListPage() {
   return (
-    <Suspense fallback={<div className="page-list"><p className="muted" style={{ padding: 20 }}>Loading…</p></div>}>
+    <Suspense fallback={<div className="loading-state">one sec…</div>}>
       <ListPageInner />
     </Suspense>
   );

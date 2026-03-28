@@ -105,12 +105,7 @@ export default function PlacePage() {
 
   // ── Render ────────────────────────────────────────────────────────────────
   if (loading) {
-    return (
-      <div className="page-place">
-        <Topbar />
-        <main id="place"><p className="muted">Loading…</p></main>
-      </div>
-    );
+    return <div className="loading-state">one sec…</div>;
   }
 
   if (!place) {
@@ -158,14 +153,16 @@ export default function PlacePage() {
           <div className="place-header-right">
             <button
               id="save-place-btn"
-              className="secondary-btn"
+              className="plain-link"
               type="button"
               onClick={handleSaveClick}
             >
-              {isSaved ? 'Saved' : 'Save place'}
+              {isSaved ? 'Saved ✓' : 'Save'}
             </button>
           </div>
         </div>
+
+        <hr className="divider" />
 
         <p id="place-description">{place.more_info ?? place.pop_up ?? ''}</p>
 
@@ -180,21 +177,43 @@ export default function PlacePage() {
         )}
         {saveStatus && <div className="save-status">{saveStatus}</div>}
 
-        {/* Photo gallery */}
+        {/* Photo gallery — hero full-width + additional photos in 2-col grid */}
         {safePhotos.length > 0 && (
-          <div id="place-gallery" className="gallery">
-            {safePhotos.map((src, i) => (
-              <Image
-                key={i}
-                src={src}
-                alt="Place photo"
-                width={320}
-                height={160}
-                style={{ width: '100%', height: 160, objectFit: 'cover', borderRadius: 14 }}
-              />
-            ))}
-          </div>
+          <>
+            <hr className="divider" />
+            <div id="place-gallery" style={{ margin: '14px 0' }}>
+              {/* Hero photo */}
+              <div style={{ position: 'relative', aspectRatio: '4/3', borderRadius: 6, overflow: 'hidden' }}>
+                <Image
+                  src={safePhotos[0]}
+                  alt="Place photo"
+                  fill
+                  style={{ objectFit: 'cover' }}
+                  sizes="100vw"
+                  priority
+                />
+              </div>
+              {/* Additional photos */}
+              {safePhotos.length > 1 && (
+                <div className="gallery" style={{ marginTop: 6 }}>
+                  {safePhotos.slice(1).map((src, i) => (
+                    <div key={i} style={{ position: 'relative', aspectRatio: '4/3', borderRadius: 6, overflow: 'hidden' }}>
+                      <Image
+                        src={src}
+                        alt="Place photo"
+                        fill
+                        style={{ objectFit: 'cover' }}
+                        sizes="(max-width: 560px) 50vw, 280px"
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </>
         )}
+
+        <hr className="divider" />
 
         <div className="place-meta">
           {/* Address */}
@@ -228,14 +247,17 @@ export default function PlacePage() {
 
           {/* Opening hours */}
           {openingHoursRows && (
-            <div id="place-hours" className="place-hours place-hours-list">
-              {openingHoursRows.map(({ day, time }, i) => (
-                <div key={i} className="place-hours-row">
-                  <span className="place-hours-day">{day}</span>
-                  <span className="place-hours-time">{time}</span>
-                </div>
-              ))}
-            </div>
+            <>
+              <hr className="divider" />
+              <div id="place-hours" className="place-hours place-hours-list">
+                {openingHoursRows.map(({ day, time }, i) => (
+                  <div key={i} className="place-hours-row">
+                    <span className="place-hours-day">{day}</span>
+                    <span className="place-hours-time">{time}</span>
+                  </div>
+                ))}
+              </div>
+            </>
           )}
         </div>
       </main>
