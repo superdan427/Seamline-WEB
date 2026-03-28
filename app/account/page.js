@@ -14,6 +14,9 @@ export default function AccountPage() {
   const [places, setPlaces] = useState([]);
   const [signupData, setSignupData] = useState({ name: '', email: '', password: '' });
   const [loginData, setLoginData] = useState({ email: '', password: '' });
+  const [showForgot, setShowForgot] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState('');
+  const [forgotStatus, setForgotStatus] = useState({ text: '', isError: false });
 
   // Load all places once (for saved places display)
   useEffect(() => {
@@ -56,6 +59,20 @@ export default function AccountPage() {
       setLoginData({ email: '', password: '' });
     } catch (err) {
       showMessage(err.message || 'Login failed.', true);
+    }
+  }
+
+  // ── Forgot password ───────────────────────────────────────────────────────
+  async function handleForgotPassword(e) {
+    e.preventDefault();
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+    const { error } = await supabase.auth.resetPasswordForEmail(forgotEmail.trim().toLowerCase(), {
+      redirectTo: `${siteUrl}/reset-password`,
+    });
+    if (error) {
+      setForgotStatus({ text: error.message, isError: true });
+    } else {
+      setForgotStatus({ text: 'Check your email for a reset link.', isError: false });
     }
   }
 
@@ -179,6 +196,33 @@ export default function AccountPage() {
                 />
                 <button className="secondary-btn" type="submit">Log in</button>
               </form>
+
+              <button
+                type="button"
+                className="forgot-password-toggle"
+                onClick={() => { setShowForgot((v) => !v); setForgotStatus({ text: '', isError: false }); }}
+              >
+                Forgot password?
+              </button>
+
+              {showForgot && (
+                <form className="forgot-password-form" onSubmit={handleForgotPassword}>
+                  <label className="field-label" htmlFor="forgot-email">Email address</label>
+                  <input
+                    id="forgot-email"
+                    type="email"
+                    required
+                    value={forgotEmail}
+                    onChange={(e) => setForgotEmail(e.target.value)}
+                  />
+                  <button className="secondary-btn" type="submit">Send reset link</button>
+                  {forgotStatus.text && (
+                    <p className={forgotStatus.isError ? 'account-message error' : 'account-message'}>
+                      {forgotStatus.text}
+                    </p>
+                  )}
+                </form>
+              )}
             </div>
           </section>
         )}

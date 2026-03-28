@@ -191,6 +191,8 @@ body {
 .map-full {
   position: fixed;
   inset: 0;
+  width: 100vw;
+  height: 100vh;
   z-index: 1;
 }
 
@@ -250,6 +252,7 @@ body {
 
   z-index: 90;
   background: #fff;
+  background-color: #ffffff;
   border-right: 1px solid #eee;
 
   transform: translateX(-100%);
