@@ -165,6 +165,27 @@ export default function HomePage() {
     updateMarkers(filtered, mapboxglRef.current);
   }
 
+  // ── Keyboard navigation for card carousel ────────────────────────────────
+  useEffect(() => {
+    if (!activePlace) return;
+
+    const cardRow = document.querySelector('.card-row');
+    if (!cardRow) return;
+
+    function handleKeyDown(e) {
+      if (e.key === 'ArrowRight') {
+        cardRow.scrollBy({ left: cardRow.offsetWidth * 0.8, behavior: 'smooth' });
+      } else if (e.key === 'ArrowLeft') {
+        cardRow.scrollBy({ left: -cardRow.offsetWidth * 0.8, behavior: 'smooth' });
+      } else if (e.key === 'Escape') {
+        setActivePlace(null);
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [activePlace]);
+
   // ── Card row ──────────────────────────────────────────────────────────────
   const sortedPlaces = activePlace ? sortByProximity(allPlaces, activePlace) : [];
 
