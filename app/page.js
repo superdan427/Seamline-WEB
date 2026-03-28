@@ -37,6 +37,7 @@ export default function HomePage() {
   const markersRef = useRef([]);
   const userMarkerRef = useRef(null);
   const userCoordsRef = useRef(null);
+  const sortedPlacesRef = useRef([]);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [allPlaces, setAllPlaces] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -173,10 +174,24 @@ export default function HomePage() {
     if (!cardRow) return;
 
     function handleKeyDown(e) {
+      const cardWidth = cardRow.offsetWidth * 0.8 + 12; // card width + gap
+      const currentIndex = Math.round(cardRow.scrollLeft / cardWidth);
+      const sorted = sortedPlacesRef.current;
+
       if (e.key === 'ArrowRight') {
+        const nextIndex = Math.min(currentIndex + 1, sorted.length - 1);
         cardRow.scrollBy({ left: cardRow.offsetWidth * 0.8, behavior: 'smooth' });
+        const place = sorted[nextIndex];
+        if (place?.lat && place?.lng && mapRef.current) {
+          mapRef.current.easeTo({ center: [place.lng, place.lat], duration: 300 });
+        }
       } else if (e.key === 'ArrowLeft') {
+        const prevIndex = Math.max(currentIndex - 1, 0);
         cardRow.scrollBy({ left: -cardRow.offsetWidth * 0.8, behavior: 'smooth' });
+        const place = sorted[prevIndex];
+        if (place?.lat && place?.lng && mapRef.current) {
+          mapRef.current.easeTo({ center: [place.lng, place.lat], duration: 300 });
+        }
       } else if (e.key === 'Escape') {
         setActivePlace(null);
       }
@@ -186,8 +201,31 @@ export default function HomePage() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [activePlace]);
 
+  // ── Scroll listener — sync map to visible card ───────────────────────────
+  useEffect(() => {
+    if (!activePlace) return;
+
+    const cardRow = document.querySelector('.card-row');
+    if (!cardRow) return;
+
+    const sorted = sortByProximity(allPlaces, activePlace);
+
+    function handleScroll() {
+      const cardWidth = cardRow.offsetWidth * 0.8 + 12; // card width + gap
+      const index = Math.round(cardRow.scrollLeft / cardWidth);
+      const place = sorted[index];
+      if (place?.lat && place?.lng && mapRef.current) {
+        mapRef.current.easeTo({ center: [place.lng, place.lat], duration: 300 });
+      }
+    }
+
+    cardRow.addEventListener('scroll', handleScroll, { passive: true });
+    return () => cardRow.removeEventListener('scroll', handleScroll);
+  }, [activePlace, allPlaces]);
+
   // ── Card row ──────────────────────────────────────────────────────────────
   const sortedPlaces = activePlace ? sortByProximity(allPlaces, activePlace) : [];
+  sortedPlacesRef.current = sortedPlaces;
 
   return (
     <div className="page-home">
