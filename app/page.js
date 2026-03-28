@@ -38,6 +38,7 @@ export default function HomePage() {
   const userMarkerRef = useRef(null);
   const userCoordsRef = useRef(null);
   const sortedPlacesRef = useRef([]);
+  const scrollTimer = useRef(null);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [allPlaces, setAllPlaces] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -104,7 +105,7 @@ export default function HomePage() {
       el.className = 'custom-marker';
       el.addEventListener('click', (e) => {
         e.stopPropagation();
-        mapRef.current?.flyTo({ center: [place.lng, place.lat], zoom: 14 });
+        mapRef.current?.easeTo({ center: [place.lng, place.lat], duration: 400 });
         setActivePlace(place);
       });
       const marker = new mapboxgl.Marker(el)
@@ -183,14 +184,14 @@ export default function HomePage() {
         cardRow.scrollBy({ left: cardRow.offsetWidth * 0.8, behavior: 'smooth' });
         const place = sorted[nextIndex];
         if (place?.lat && place?.lng && mapRef.current) {
-          mapRef.current.easeTo({ center: [place.lng, place.lat], duration: 300 });
+          mapRef.current.easeTo({ center: [place.lng, place.lat], duration: 500, easing: (t) => t * (2 - t) });
         }
       } else if (e.key === 'ArrowLeft') {
         const prevIndex = Math.max(currentIndex - 1, 0);
         cardRow.scrollBy({ left: -cardRow.offsetWidth * 0.8, behavior: 'smooth' });
         const place = sorted[prevIndex];
         if (place?.lat && place?.lng && mapRef.current) {
-          mapRef.current.easeTo({ center: [place.lng, place.lat], duration: 300 });
+          mapRef.current.easeTo({ center: [place.lng, place.lat], duration: 500, easing: (t) => t * (2 - t) });
         }
       } else if (e.key === 'Escape') {
         setActivePlace(null);
@@ -211,12 +212,19 @@ export default function HomePage() {
     const sorted = sortByProximity(allPlaces, activePlace);
 
     function handleScroll() {
-      const cardWidth = cardRow.offsetWidth * 0.8 + 12; // card width + gap
-      const index = Math.round(cardRow.scrollLeft / cardWidth);
-      const place = sorted[index];
-      if (place?.lat && place?.lng && mapRef.current) {
-        mapRef.current.easeTo({ center: [place.lng, place.lat], duration: 300 });
-      }
+      clearTimeout(scrollTimer.current);
+      scrollTimer.current = setTimeout(() => {
+        const cardWidth = cardRow.offsetWidth * 0.8 + 12; // card width + gap
+        const index = Math.round(cardRow.scrollLeft / cardWidth);
+        const place = sorted[index];
+        if (place?.lat && place?.lng && mapRef.current) {
+          mapRef.current.easeTo({
+            center: [place.lng, place.lat],
+            duration: 500,
+            easing: (t) => t * (2 - t),
+          });
+        }
+      }, 80);
     }
 
     cardRow.addEventListener('scroll', handleScroll, { passive: true });
