@@ -9,6 +9,18 @@ import { isOnlinePlace, getCategoriesFromPlaces, filterPlacesByCategory } from '
 import { useAuth } from '@/hooks/useAuth';
 import { isPlaceSaved, savePlace, removeSavedPlace, getCollections, addPlaceToCollection, createCollection } from '@/lib/storage';
 import { sanitizePhotoArray, escapeHtml } from '@/lib/sanitizer';
+import { getOpenStatus } from '@/lib/hours';
+
+function OpenStatus({ openingHours }) {
+  const status = getOpenStatus(openingHours);
+  if (!status) return null;
+  return (
+    <span className={status === 'open' ? 'status-open' : 'status-closed'}>
+      <span className="status-dot" />
+      {status === 'open' ? 'Open' : 'Closed'}
+    </span>
+  );
+}
 
 export default function HomePage() {
   const router = useRouter();
@@ -265,30 +277,23 @@ export default function HomePage() {
             onTouchEnd={handleModalTouchEnd}
           >
             <div className="modal-drag-handle" />
-            <button
-              className="modal-close"
-              aria-label="Close"
-              onClick={() => { setModal(null); setShowSaveOptions(false); setSaveStatus(''); }}
-            >
-              ×
-            </button>
 
             <div className="modal-title">{modal.name ?? ''}</div>
-            <div className="modal-sub">{modal.category ?? ''}</div>
-            {modal.pop_up && <p className="modal-description">{modal.pop_up}</p>}
+            <div className="modal-sub">
+              <span>{modal.category ?? ''}</span>
+              <OpenStatus openingHours={modal.opening_hours} />
+            </div>
 
+            {/* Hero photo — full-bleed 4:3 */}
             {safePhotos.length > 0 && (
-              <div className="modal-gallery">
-                {safePhotos.map((src, i) => (
-                  <Image
-                    key={i}
-                    src={src}
-                    alt=""
-                    width={240}
-                    height={140}
-                    style={{ width: '100%', height: 140, objectFit: 'cover', borderRadius: 12 }}
-                  />
-                ))}
+              <div style={{ position: 'relative', aspectRatio: '4/3', margin: '0 -20px 16px' }}>
+                <Image
+                  src={safePhotos[0]}
+                  alt=""
+                  fill
+                  style={{ objectFit: 'cover' }}
+                  sizes="100vw"
+                />
               </div>
             )}
 
@@ -301,12 +306,6 @@ export default function HomePage() {
               </button>
               <button className="secondary-btn" onClick={handleSave}>
                 {isSaved ? 'Saved' : 'Save'}
-              </button>
-              <button
-                className="secondary-btn"
-                onClick={() => { setModal(null); setShowSaveOptions(false); setSaveStatus(''); }}
-              >
-                Close
               </button>
             </div>
 

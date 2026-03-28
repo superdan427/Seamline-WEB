@@ -4,6 +4,18 @@ import { useEffect, useState, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Topbar from '@/components/Topbar';
 import { supabase } from '@/lib/supabase';
+import { getOpenStatus } from '@/lib/hours';
+
+function OpenStatus({ openingHours }) {
+  const status = getOpenStatus(openingHours);
+  if (!status) return null;
+  return (
+    <span className={status === 'open' ? 'status-open' : 'status-closed'}>
+      <span className="status-dot" />
+      {status === 'open' ? 'Open' : 'Closed'}
+    </span>
+  );
+}
 
 function normalizeTag(tag) {
   if (tag == null) return '';
@@ -173,8 +185,9 @@ export default function SearchPage() {
               return (
                 <article key={place.id} className="search-result-card">
                   <h3>{place.name ?? ''}</h3>
-                  <div className="search-result-meta">
-                    {[place.category, area].filter(Boolean).join(' · ')}
+                  <div className="search-result-meta" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span>{[place.category, area].filter(Boolean).join(' · ')}</span>
+                    <OpenStatus openingHours={place.opening_hours} />
                   </div>
                   <p className="muted">{place.pop_up ?? ''}</p>
                   {topTags.length > 0 && (

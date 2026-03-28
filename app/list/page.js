@@ -5,6 +5,18 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Topbar from '@/components/Topbar';
 import { supabase } from '@/lib/supabase';
 import { getCategoriesFromPlaces, filterPlacesByCategory } from '@/lib/filters';
+import { getOpenStatus } from '@/lib/hours';
+
+function OpenStatus({ openingHours }) {
+  const status = getOpenStatus(openingHours);
+  if (!status) return null;
+  return (
+    <span className={status === 'open' ? 'status-open' : 'status-closed'}>
+      <span className="status-dot" />
+      {status === 'open' ? 'Open' : 'Closed'}
+    </span>
+  );
+}
 
 // Helper copied from ui/list.js
 function normalizeLabel(category) {
@@ -106,7 +118,10 @@ function ListPageInner() {
               onClick={() => router.push(`/place/${encodeURIComponent(place.id)}`)}
             >
               <div className="place-name">{place.name ?? ''}</div>
-              <div className="place-category">{place.category ?? ''}</div>
+              <div className="place-category">
+                <span>{place.category ?? ''}</span>
+                <OpenStatus openingHours={place.opening_hours} />
+              </div>
             </div>
           ))}
         </div>

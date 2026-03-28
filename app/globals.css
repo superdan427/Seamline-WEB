@@ -415,9 +415,7 @@ body {
   z-index: 120;
   display: flex;
   align-items: flex-end;
-  justify-content: center;
-  background: rgba(0, 0, 0, 0.35);
-  padding: 16px;
+  background: rgba(0, 0, 0, 0.3);
 }
 
 .modal.hidden {
@@ -426,12 +424,10 @@ body {
 
 .modal-content {
   width: 100%;
-  max-width: 560px;
   background: #fff;
-  border-radius: 16px;
-  padding: 16px;
-  position: relative;
-  max-height: 75vh;
+  border-radius: 16px 16px 0 0;
+  padding: 0 20px 40px;
+  max-height: 70vh;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   -webkit-user-select: none;
@@ -443,7 +439,7 @@ body {
   height: 4px;
   background: #ddd;
   border-radius: 2px;
-  margin: 0 auto 12px;
+  margin: 12px auto 16px;
 }
 
 .modal-close {
@@ -460,15 +456,19 @@ body {
 }
 
 .modal-title {
-  font-size: 18px;
+  font-size: 1.25rem;
   font-weight: 700;
-  margin: 6px 0 2px;
+  letter-spacing: -0.01em;
+  margin: 4px 0 2px;
 }
 
 .modal-sub {
-  font-size: 14px;
-  color: #666;
-  margin: 0 0 10px;
+  font-size: 0.8rem;
+  color: #999;
+  margin: 0 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .modal-actions {
@@ -519,15 +519,11 @@ body {
    ========================= */
 
 #list {
-  padding: 16px;
-}
-
-.page-list #list {
-  padding-top: 8px;
+  padding: 8px 0 0;
 }
 
 .list-item {
-  padding: 18px 0;
+  padding: 14px 20px;
   border-bottom: 1px solid #eee;
   cursor: pointer;
 }
@@ -548,6 +544,9 @@ body {
   color: #999;
   font-weight: 400;
   text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 /* =========================
@@ -1215,4 +1214,59 @@ body {
 }
 .oauth-btn-apple:hover {
   background: #1a1a1a;
+}
+
+/* =========================
+   GALLERY STRIP
+   ========================= */
+
+.gallery-strip {
+  display: flex;
+  flex-direction: row;
+  overflow-x: auto;
+  gap: 8px;
+  padding: 0 20px;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.gallery-strip::-webkit-scrollbar {
+  display: none;
+}
+
+.gallery-strip-item {
+  flex-shrink: 0;
+  width: 200px;
+  aspect-ratio: 4 / 3;
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* =========================
+   OPEN / CLOSED INDICATOR
+   ========================= */
+
+.status-open {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+  color: #2d8a4e;
+}
+
+.status-closed {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+  color: #999;
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
 }

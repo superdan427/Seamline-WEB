@@ -16,6 +16,7 @@ import {
 } from '@/lib/storage';
 import { sanitizeUrl, sanitizePhotoArray } from '@/lib/sanitizer';
 import { isOnlinePlace } from '@/lib/filters';
+import { parseOpeningHours } from '@/lib/hours';
 
 export default function PlacePage() {
   const { id } = useParams();
@@ -177,39 +178,37 @@ export default function PlacePage() {
         )}
         {saveStatus && <div className="save-status">{saveStatus}</div>}
 
-        {/* Photo gallery — hero full-width + additional photos in 2-col grid */}
+        {/* Photo gallery — hero full-bleed + horizontal scroll strip */}
         {safePhotos.length > 0 && (
           <>
             <hr className="divider" />
-            <div id="place-gallery" style={{ margin: '14px 0' }}>
-              {/* Hero photo */}
-              <div style={{ position: 'relative', aspectRatio: '4/3', borderRadius: 6, overflow: 'hidden' }}>
-                <Image
-                  src={safePhotos[0]}
-                  alt="Place photo"
-                  fill
-                  style={{ objectFit: 'cover' }}
-                  sizes="100vw"
-                  priority
-                />
-              </div>
-              {/* Additional photos */}
-              {safePhotos.length > 1 && (
-                <div className="gallery" style={{ marginTop: 6 }}>
-                  {safePhotos.slice(1).map((src, i) => (
-                    <div key={i} style={{ position: 'relative', aspectRatio: '4/3', borderRadius: 6, overflow: 'hidden' }}>
-                      <Image
-                        src={src}
-                        alt="Place photo"
-                        fill
-                        style={{ objectFit: 'cover' }}
-                        sizes="(max-width: 560px) 50vw, 280px"
-                      />
-                    </div>
-                  ))}
-                </div>
-              )}
+            {/* Hero — bleeds edge to edge, no border-radius */}
+            <div style={{ position: 'relative', aspectRatio: '4/3', marginLeft: -16, marginRight: -16 }}>
+              <Image
+                src={safePhotos[0]}
+                alt="Place photo"
+                fill
+                style={{ objectFit: 'cover' }}
+                sizes="100vw"
+                priority
+              />
             </div>
+            {/* Remaining photos — swipeable horizontal strip */}
+            {safePhotos.length > 1 && (
+              <div className="gallery-strip" style={{ marginTop: 12, marginLeft: -16, marginRight: -16 }}>
+                {safePhotos.slice(1).map((src, i) => (
+                  <div key={i} className="gallery-strip-item">
+                    <Image
+                      src={src}
+                      alt="Place photo"
+                      fill
+                      style={{ objectFit: 'cover' }}
+                      sizes="200px"
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
           </>
         )}
 
@@ -263,30 +262,6 @@ export default function PlacePage() {
       </main>
     </div>
   );
-}
-
-// ── Helpers ──────────────────────────────────────────────────────────────────
-
-function parseOpeningHours(raw) {
-  const lines = raw.split(/\n+/).map((l) => l.trim()).filter(Boolean);
-  const rows = [];
-  lines.forEach((line, index) => {
-    const parts = line.split(/\t+/).map((p) => p.trim()).filter(Boolean);
-    if (parts.length >= 2) {
-      rows.push({ day: parts[0], time: parts.slice(1).join(' ') });
-      return;
-    }
-    if (index + 1 < lines.length && !/\d/.test(line)) {
-      const next = lines[index + 1]?.trim();
-      if (next && /\d/.test(next)) {
-        rows.push({ day: line, time: next });
-        lines[index + 1] = '';
-        return;
-      }
-    }
-    rows.push({ day: line, time: '' });
-  });
-  return rows;
 }
 
 function SaveOptions({ collections, onQuickSave, onSaveToCollection, onCreateAndSave }) {
