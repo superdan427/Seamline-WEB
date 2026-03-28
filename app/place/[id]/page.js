@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Topbar from '@/components/Topbar';
@@ -26,6 +26,8 @@ export default function PlacePage() {
   const [loading, setLoading] = useState(true);
   const [showSaveOptions, setShowSaveOptions] = useState(false);
   const [saveStatus, setSaveStatus] = useState('');
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxInitialSlide, setLightboxInitialSlide] = useState(0);
 
   // ── Load place ────────────────────────────────────────────────────────────
   useEffect(() => {
@@ -104,6 +106,11 @@ export default function PlacePage() {
     }
   }
 
+  function handlePhotoTap(index) {
+    setLightboxInitialSlide(index);
+    setLightboxOpen(true);
+  }
+
   // ── Render ────────────────────────────────────────────────────────────────
   if (loading) {
     return <div className="loading-state">one sec…</div>;
@@ -178,37 +185,13 @@ export default function PlacePage() {
         )}
         {saveStatus && <div className="save-status">{saveStatus}</div>}
 
-        {/* Photo gallery — hero full-bleed + horizontal scroll strip */}
+        {/* Photo carousel — full-bleed, tap to open lightbox */}
         {safePhotos.length > 0 && (
           <>
             <hr className="divider" />
-            {/* Hero — bleeds edge to edge, no border-radius */}
-            <div style={{ position: 'relative', aspectRatio: '4/3', marginLeft: -16, marginRight: -16 }}>
-              <Image
-                src={safePhotos[0]}
-                alt="Place photo"
-                fill
-                style={{ objectFit: 'cover' }}
-                sizes="100vw"
-                priority
-              />
+            <div style={{ margin: '0 -16px' }}>
+              <PhotoCarousel photos={safePhotos} onSlideClick={handlePhotoTap} />
             </div>
-            {/* Remaining photos — swipeable horizontal strip */}
-            {safePhotos.length > 1 && (
-              <div className="gallery-strip" style={{ marginTop: 12, marginLeft: -16, marginRight: -16 }}>
-                {safePhotos.slice(1).map((src, i) => (
-                  <div key={i} className="gallery-strip-item">
-                    <Image
-                      src={src}
-                      alt="Place photo"
-                      fill
-                      style={{ objectFit: 'cover' }}
-                      sizes="200px"
-                    />
-                  </div>
-                ))}
-              </div>
-            )}
           </>
         )}
 
@@ -260,9 +243,170 @@ export default function PlacePage() {
           )}
         </div>
       </main>
+
+      {/* Fullscreen lightbox */}
+      {lightboxOpen && (
+        <Lightbox
+          photos={safePhotos}
+          initialIndex={lightboxInitialSlide}
+          onClose={() => setLightboxOpen(false)}
+        />
+      )}
     </div>
   );
 }
+
+// ── PhotoCarousel ─────────────────────────────────────────────────────────────
+// Inline carousel: 4:3 crop, tap slide to open lightbox, dot indicators.
+
+function PhotoCarousel({ photos, onSlideClick }) {
+  const [current, setCurrent] = useState(0);
+  const ref = useRef(null);
+
+  function handleScroll() {
+    if (!ref.current) return;
+    const w = ref.current.offsetWidth;
+    if (!w) return;
+    setCurrent(Math.round(ref.current.scrollLeft / w));
+  }
+
+  return (
+    <div>
+      <div className="carousel" ref={ref} onScroll={handleScroll}>
+        {photos.map((src, i) => (
+          <div
+            key={i}
+            className="carousel-slide"
+            onClick={() => onSlideClick?.(i)}
+          >
+            <Image
+              src={src}
+              alt="Place photo"
+              fill
+              style={{ objectFit: 'cover' }}
+              sizes="100vw"
+              priority={i === 0}
+            />
+          </div>
+        ))}
+      </div>
+      {photos.length > 1 && (
+        <div className="carousel-dots">
+          {photos.map((_, i) => (
+            <span key={i} className={`carousel-dot${i === current ? ' active' : ''}`} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── Lightbox ──────────────────────────────────────────────────────────────────
+// Fullscreen overlay: object-fit contain so full photo is visible,
+// counter top-centre, × top-left, swipe down to close.
+
+function Lightbox({ photos, initialIndex, onClose }) {
+  const [current, setCurrent] = useState(initialIndex);
+  const ref = useRef(null);
+  const touchStartX = useRef(null);
+  const touchStartY = useRef(null);
+
+  // Scroll to the tapped slide on mount
+  useEffect(() => {
+    if (!ref.current) return;
+    const scrollTo = () => {
+      if (ref.current && initialIndex > 0) {
+        ref.current.scrollLeft = initialIndex * ref.current.offsetWidth;
+        setCurrent(initialIndex);
+      }
+    };
+    requestAnimationFrame(scrollTo);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Prevent body scroll while lightbox is open
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = prev; };
+  }, []);
+
+  function handleScroll() {
+    if (!ref.current) return;
+    const w = ref.current.offsetWidth;
+    if (!w) return;
+    setCurrent(Math.round(ref.current.scrollLeft / w));
+  }
+
+  function handleTouchStart(e) {
+    touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
+  }
+
+  function handleTouchEnd(e) {
+    if (touchStartY.current === null) return;
+    const distY = e.changedTouches[0].clientY - touchStartY.current;
+    const distX = Math.abs(e.changedTouches[0].clientX - (touchStartX.current ?? 0));
+    touchStartX.current = null;
+    touchStartY.current = null;
+    // Close only on predominantly downward swipe (not horizontal photo-swipe)
+    if (distY > 80 && distY > distX * 1.5) onClose();
+  }
+
+  return (
+    <div
+      className="lightbox"
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+    >
+      {/* Header: × left, counter centre */}
+      <div className="lightbox-header">
+        <button
+          className="lightbox-close"
+          aria-label="Close"
+          onClick={onClose}
+        >
+          ×
+        </button>
+        {photos.length > 1 && (
+          <span className="lightbox-counter">{current + 1} / {photos.length}</span>
+        )}
+      </div>
+
+      {/* Scrollable photo strip */}
+      <div className="lightbox-body">
+        <div
+          className="carousel lightbox-carousel"
+          ref={ref}
+          onScroll={handleScroll}
+        >
+          {photos.map((src, i) => (
+            <div key={i} className="carousel-slide lightbox-slide">
+              <Image
+                src={src}
+                alt="Place photo"
+                fill
+                style={{ objectFit: 'contain' }}
+                sizes="100vw"
+                priority={i === initialIndex}
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Dots */}
+      {photos.length > 1 && (
+        <div className="carousel-dots carousel-dots-light">
+          {photos.map((_, i) => (
+            <span key={i} className={`carousel-dot${i === current ? ' active' : ''}`} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── SaveOptions ───────────────────────────────────────────────────────────────
 
 function SaveOptions({ collections, onQuickSave, onSaveToCollection, onCreateAndSave }) {
   const [selectedCollection, setSelectedCollection] = useState('');
