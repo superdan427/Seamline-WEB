@@ -94,10 +94,9 @@ export default function AdminPage() {
   async function handleReject(sub) {
     if (!window.confirm(`Reject "${sub.name}"? This won't delete it.`)) return;
     try {
-      const { error } = await supabase
-        .from('place_submissions')
-        .update({ status: 'rejected' })
-        .eq('id', sub.id);
+      const { error } = await supabase.rpc('reject_submission', {
+        submission_id: sub.id,
+      });
       if (error) throw error;
       showMessage(`"${sub.name}" rejected.`, false);
       setSubmissions((prev) => prev.filter((s) => s.id !== sub.id));
