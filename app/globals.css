@@ -406,75 +406,100 @@ body {
 }
 
 /* =========================
-   MODAL
+   CARD ROW (map marker tapped)
    ========================= */
 
-.modal {
+.card-row {
   position: fixed;
-  inset: 0;
-  z-index: 120;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
   display: flex;
-  align-items: flex-end;
-  background: rgba(0, 0, 0, 0.3);
-}
-
-.modal.hidden {
-  display: none !important;
-}
-
-.modal-content {
-  width: 100%;
-  background: #fff;
-  border-radius: 16px 16px 0 0;
-  padding: 0 20px 40px;
-  max-height: 70vh;
-  overflow-y: auto;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
-  -webkit-user-select: none;
-  user-select: none;
+  scrollbar-width: none;
+  gap: 12px;
+  padding: 12px 20px 32px;
+  background: transparent;
+  transition: transform 0.3s ease;
 }
 
-.modal-drag-handle {
-  width: 36px;
-  height: 4px;
-  background: #ddd;
-  border-radius: 2px;
-  margin: 12px auto 16px;
+.card-row::-webkit-scrollbar {
+  display: none;
 }
 
-.modal-close {
-  position: absolute;
-  right: 10px;
-  top: 8px;
-  width: 44px;
-  height: 44px;
+.card-row.hidden {
+  transform: translateY(100%);
+}
 
-  background: none;
-  border: none;
+.place-card {
+  flex-shrink: 0;
+  width: 80vw;
+  height: 180px;
+  scroll-snap-align: start;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+  overflow: hidden;
   cursor: pointer;
-  font-size: 24px;
+  display: flex;
+  flex-direction: column;
 }
 
-.modal-title {
-  font-size: 1.25rem;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  margin: 4px 0 2px;
+/* Card with photo */
+.place-card-photo {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  border-radius: 16px 16px 0 0;
+  overflow: hidden;
 }
 
-.modal-sub {
-  font-size: 0.8rem;
-  color: #999;
-  margin: 0 0 12px;
+.place-card-info {
+  flex-shrink: 0;
+  padding: 10px 12px;
+}
+
+.place-card-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.2;
+  color: #111;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.place-card-meta {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
+  margin-top: 2px;
+  font-size: 0.75rem;
+  color: #999;
 }
 
-.modal-actions {
-  margin-top: 12px;
+/* Card without photo */
+.place-card-no-photo {
+  flex: 1;
   display: flex;
-  gap: 10px;
+  flex-direction: column;
+  justify-content: center;
+  padding: 20px;
+  gap: 4px;
+}
+
+.place-card-no-photo .place-card-name {
+  font-size: 1rem;
+  font-weight: 700;
+  white-space: normal;
+}
+
+.place-card-category {
+  font-size: 0.78rem;
+  color: #999;
 }
 
 .primary-btn {
@@ -497,21 +522,6 @@ body {
   font-size: 14px;
   cursor: pointer;
   min-height: 44px;
-}
-
-/* modal images */
-.modal-gallery {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  margin-top: 10px;
-}
-
-.modal-gallery img {
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
-  border-radius: 8px;
 }
 
 /* =========================
@@ -950,7 +960,11 @@ body {
   line-height: 1;
 }
 
-/* Save controls */
+
+/* =========================
+   SAVE OPTIONS (place detail page)
+   ========================= */
+
 .save-options {
   margin-top: 10px;
   padding: 12px 0;
@@ -990,8 +1004,8 @@ body {
   flex-wrap: wrap;
 }
 
-.save-options select,
-.save-options input {
+.save-option-select,
+.save-option-input {
   flex: 1;
   min-width: 160px;
   border: 1px solid #ddd;
@@ -1001,7 +1015,7 @@ body {
   font-family: inherit;
 }
 
-.save-options form {
+.save-options-form {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
