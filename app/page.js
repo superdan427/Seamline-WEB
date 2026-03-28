@@ -19,6 +19,7 @@ export default function HomePage() {
   const markersRef = useRef([]);
   const userMarkerRef = useRef(null);
   const userCoordsRef = useRef(null);
+  const touchStartY = useRef(null);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [allPlaces, setAllPlaces] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -191,6 +192,21 @@ export default function HomePage() {
     setShowSaveOptions(false);
   }
 
+  function handleModalTouchStart(e) {
+    touchStartY.current = e.touches[0].clientY;
+  }
+
+  function handleModalTouchEnd(e) {
+    if (touchStartY.current === null) return;
+    const swipeDistance = e.changedTouches[0].clientY - touchStartY.current;
+    touchStartY.current = null;
+    if (swipeDistance > 80) {
+      setModal(null);
+      setShowSaveOptions(false);
+      setSaveStatus('');
+    }
+  }
+
   const currentUserForSave = user ? { email: user.email, id: user.id } : null;
   const isSaved = modal && currentUserForSave ? isPlaceSaved(currentUserForSave, modal.id) : false;
   const collections = currentUserForSave ? getCollections(currentUserForSave) : [];
@@ -242,7 +258,13 @@ export default function HomePage() {
           className="modal"
           onClick={() => { setModal(null); setShowSaveOptions(false); setSaveStatus(''); }}
         >
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="modal-content"
+            onClick={(e) => e.stopPropagation()}
+            onTouchStart={handleModalTouchStart}
+            onTouchEnd={handleModalTouchEnd}
+          >
+            <div className="modal-drag-handle" />
             <button
               className="modal-close"
               aria-label="Close"
