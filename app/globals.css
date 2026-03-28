@@ -327,6 +327,18 @@ body {
 
 }
 
+.active-marker {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background-color: #04ff00;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 2px #b1f03a;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  transform: scale(1.2);
+}
+
 /* =========================
    SIDE MENU
    ========================= */

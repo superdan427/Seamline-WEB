@@ -39,6 +39,7 @@ export default function HomePage() {
   const userCoordsRef = useRef(null);
   const sortedPlacesRef = useRef([]);
   const scrollTimer = useRef(null);
+  const activeMarkerRef = useRef(null);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [allPlaces, setAllPlaces] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -63,7 +64,7 @@ export default function HomePage() {
         interactive: true,
       });
       map.addControl(new mapboxgl.NavigationControl(), 'bottom-right');
-      map.on('click', () => setActivePlace(null));
+      map.on('click', () => { setActivePlace(null); setActiveMarker(null); });
       mapRef.current = map;
     });
 
@@ -107,6 +108,7 @@ export default function HomePage() {
         e.stopPropagation();
         mapRef.current?.easeTo({ center: [place.lng, place.lat], duration: 400 });
         setActivePlace(place);
+        setActiveMarker(place);
       });
       const marker = new mapboxgl.Marker(el)
         .setLngLat([place.lng, place.lat])
@@ -159,6 +161,23 @@ export default function HomePage() {
     }
   }
 
+  // ── Active marker highlight ───────────────────────────────────────────────
+  function setActiveMarker(place) {
+    if (activeMarkerRef.current) {
+      activeMarkerRef.current.remove();
+      activeMarkerRef.current = null;
+    }
+    if (!place?.lat || !place?.lng || !mapRef.current) return;
+    import('mapbox-gl').then((mod) => {
+      const mapboxgl = mod.default || mod;
+      const el = document.createElement('div');
+      el.className = 'active-marker';
+      activeMarkerRef.current = new mapboxgl.Marker(el)
+        .setLngLat([place.lng, place.lat])
+        .addTo(mapRef.current);
+    });
+  }
+
   // ── Category filter ───────────────────────────────────────────────────────
   function handleFilterSelect(category) {
     setActiveCategory(category);
@@ -185,6 +204,7 @@ export default function HomePage() {
         const place = sorted[nextIndex];
         if (place?.lat && place?.lng && mapRef.current) {
           mapRef.current.easeTo({ center: [place.lng, place.lat], duration: 500, easing: (t) => t * (2 - t) });
+          setActiveMarker(place);
         }
       } else if (e.key === 'ArrowLeft') {
         const prevIndex = Math.max(currentIndex - 1, 0);
@@ -192,9 +212,11 @@ export default function HomePage() {
         const place = sorted[prevIndex];
         if (place?.lat && place?.lng && mapRef.current) {
           mapRef.current.easeTo({ center: [place.lng, place.lat], duration: 500, easing: (t) => t * (2 - t) });
+          setActiveMarker(place);
         }
       } else if (e.key === 'Escape') {
         setActivePlace(null);
+        setActiveMarker(null);
       }
     }
 
@@ -223,6 +245,7 @@ export default function HomePage() {
             duration: 500,
             easing: (t) => t * (2 - t),
           });
+          setActiveMarker(place);
         }
       }, 80);
     }
