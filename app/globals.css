@@ -135,6 +135,8 @@ body {
 
 .topbar-center {
   margin: 0;
+  margin-top: -24px;  
+  margin-bottom: -28px;
   font-size: 18px;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -193,17 +195,17 @@ body {
   position: absolute;
   left: 0;
   right: 0;
-  top: 52px; /* below topbar */
+  top: 52px; /* flush with topbar bottom */
   z-index: 45;
   background: rgba(255, 255, 255, 0.35);
   backdrop-filter: blur(10px);
   border-bottom: none;
-  padding-top: calc(env(safe-area-inset-top, 0px) + 10px);
+  padding-top: 0;
 }
 
 .filters-row {
   display: flex;
-  gap: 12px;
+  gap: 10px;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   scroll-snap-type: x proximity;
@@ -333,8 +335,8 @@ body {
 .menu-overlay {
   position: fixed;
   inset: 0;
-  z-index: 80;
-  background: rgba(0, 0, 0, 0.3);
+  z-index: 199;
+  background: rgba(0, 0, 0, 0.4);
 }
 
 .menu-overlay.hidden {
@@ -350,9 +352,9 @@ body {
   min-width: 220px;
   max-width: 320px;
 
-  z-index: 90;
+  z-index: 200;
   background: #fff;
-  background-color: #ffffff;
+  background-color: #ffffff !important;
   border-right: 1px solid #eee;
 
   transform: translateX(-100%);
