@@ -32,6 +32,10 @@ export default function HomePage() {
       const mapboxgl = mod.default || mod;
       mapboxglRef.current = mapboxgl;
       mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
+      // Clear container before init to prevent hydration conflict
+      if (mapContainerRef.current) {
+        mapContainerRef.current.innerHTML = '';
+      }
       map = new mapboxgl.Map({
         container: mapContainerRef.current,
         style: 'mapbox://styles/mapbox/light-v11',
@@ -230,7 +234,7 @@ export default function HomePage() {
       </div>
 
       {/* Map */}
-      <div ref={mapContainerRef} className="map-full" />
+      <div ref={mapContainerRef} className="map-full" suppressHydrationWarning />
 
       {/* Modal */}
       {modal && (
