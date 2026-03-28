@@ -80,15 +80,7 @@ function ListPageInner() {
 
   return (
     <div className="page-list">
-      <header className="topbar">
-        <div className="topbar-left">
-          <button className="icon-button" onClick={() => router.back()} aria-label="Back">←</button>
-        </div>
-        <div className="topbar-center">
-          <a href="/" style={{ textDecoration: 'inherit', color: 'inherit' }}>SEAMLINE WEB 0.95</a>
-        </div>
-        <div className="topbar-right" />
-      </header>
+      <Topbar />
 
       {/* Filter bar */}
       <div className="filterbar">

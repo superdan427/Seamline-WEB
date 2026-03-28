@@ -110,8 +110,8 @@ body {
   grid-template-columns: 56px 1fr 56px;
   align-items: center;
 
-  padding: 14px 10px;
-  padding-top: calc(env(safe-area-inset-top, 0px) + 14px);
+  height: 52px;
+  padding: 0 16px;
   -webkit-user-select: none;
   user-select: none;
 }
@@ -134,7 +134,7 @@ body {
 }
 
 .topbar-center {
-  margin: 0 0 12px 0;
+  margin: 0;
   font-size: 18px;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -193,7 +193,7 @@ body {
   position: absolute;
   left: 0;
   right: 0;
-  top: 64px; /* below topbar */
+  top: 52px; /* below topbar */
   z-index: 45;
   background: rgba(255, 255, 255, 0.35);
   backdrop-filter: blur(10px);
@@ -334,7 +334,7 @@ body {
   position: fixed;
   inset: 0;
   z-index: 80;
-  background: rgba(0, 0, 0, 0.25);
+  background: rgba(0, 0, 0, 0.3);
 }
 
 .menu-overlay.hidden {
@@ -421,7 +421,7 @@ body {
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
   gap: 12px;
-  padding: 12px 20px 32px;
+  padding: 12px 10px 32px;
   background: transparent;
   transition: transform 0.3s ease;
 }
@@ -438,7 +438,7 @@ body {
   flex-shrink: 0;
   width: 80vw;
   height: 180px;
-  scroll-snap-align: start;
+  scroll-snap-align: center;
   border-radius: 16px;
   background: #fff;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
@@ -960,11 +960,7 @@ body {
   line-height: 1;
 }
 
-
-/* =========================
-   SAVE OPTIONS (place detail page)
-   ========================= */
-
+/* Save controls */
 .save-options {
   margin-top: 10px;
   padding: 12px 0;
@@ -1004,8 +1000,8 @@ body {
   flex-wrap: wrap;
 }
 
-.save-option-select,
-.save-option-input {
+.save-options select,
+.save-options input {
   flex: 1;
   min-width: 160px;
   border: 1px solid #ddd;
@@ -1015,7 +1011,7 @@ body {
   font-family: inherit;
 }
 
-.save-options-form {
+.save-options form {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
@@ -1491,4 +1487,32 @@ textarea.form-input {
 .submit-btn:disabled {
   background: #ccc;
   cursor: not-allowed;
+}
+
+.about-page {
+  padding: 48px 24px 80px;
+  max-width: 480px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.about-hook,
+.about-body,
+.about-cta,
+.about-stamp,
+.about-submit {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  font-weight: 400;
+  color: #111;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.about-submit a {
+  color: #111;
+  text-decoration: underline;
+    text-underline-offset: 4px;
 }

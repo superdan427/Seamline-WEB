@@ -173,17 +173,17 @@ export default function HomePage() {
       {/* Topbar overlay */}
       <Topbar
         overlay
-        right={
-          <button
-            className="icon-button"
-            aria-label="Toggle dark mode"
-            aria-pressed={String(isDarkMode)}
-            type="button"
-            onClick={() => toggleDarkMode(mapboxglRef.current)}
-          >
-            {isDarkMode ? 'Light' : 'Dark'}
-          </button>
-        }
+        // right={
+        //   <button
+        //     className="icon-button"
+        //     aria-label="Toggle dark mode"
+        //     aria-pressed={String(isDarkMode)}
+        //     type="button"
+        //     onClick={() => toggleDarkMode(mapboxglRef.current)}
+        //   >
+        //     {isDarkMode ? 'Light' : 'Dark'}
+        //   </button>
+        // }
       />
 
       {/* Filter bar */}

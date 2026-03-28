@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
+import Topbar from '@/components/Topbar';
 
 export default function ResetPasswordPage() {
   const router = useRouter();
@@ -11,6 +12,7 @@ export default function ResetPasswordPage() {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [status, setStatus] = useState({ text: '', isError: false });
+  const [success, setSuccess] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -29,8 +31,7 @@ export default function ResetPasswordPage() {
     if (error) {
       setStatus({ text: error.message, isError: true });
     } else {
-      setStatus({ text: 'Password updated successfully. Redirecting…', isError: false });
-      setTimeout(() => router.push('/account'), 2000);
+      setSuccess(true);
     }
   }
 
@@ -38,13 +39,7 @@ export default function ResetPasswordPage() {
 
   return (
     <div className="page-account">
-      <header className="topbar">
-        <div className="topbar-left" />
-        <div className="topbar-center">
-          <a href="/" style={{ textDecoration: 'inherit', color: 'inherit' }}>SEAMLINE WEB 0.95</a>
-        </div>
-        <div className="topbar-right" />
-      </header>
+      <Topbar />
 
       <main className="account-page">
         <div className="account-card">
@@ -52,6 +47,13 @@ export default function ResetPasswordPage() {
 
           {!hasSession ? (
             <p className="account-message error">Invalid or expired reset link.</p>
+          ) : success ? (
+            <>
+              <p className="account-message">Your password has been updated successfully.</p>
+              <button className="primary-btn" type="button" onClick={() => router.push('/account')}>
+                Log in
+              </button>
+            </>
           ) : (
             <form onSubmit={handleSubmit} autoComplete="off">
               <label className="field-label" htmlFor="new-password">New password</label>
@@ -72,9 +74,7 @@ export default function ResetPasswordPage() {
               />
               <button className="primary-btn" type="submit">Update password</button>
               {status.text && (
-                <p className={status.isError ? 'account-message error' : 'account-message'}>
-                  {status.text}
-                </p>
+                <p className="account-message error">{status.text}</p>
               )}
             </form>
           )}

@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import SideMenu from './SideMenu';
 
 /**
@@ -6,9 +7,8 @@ import SideMenu from './SideMenu';
  * @param {object} props
  * @param {boolean} [props.overlay] - Use the transparent/blurred overlay style (home page)
  * @param {React.ReactNode} [props.right] - Optional right-side content
- * @param {string} [props.title] - Override the title text
  */
-export default function Topbar({ overlay = false, right = null, title = 'SEAMLINE WEB 0.95' }) {
+export default function Topbar({ overlay = false, right = null }) {
   return (
     <header className={`topbar${overlay ? ' topbar-overlay' : ''}`}>
       <div className="topbar-left">
@@ -16,8 +16,15 @@ export default function Topbar({ overlay = false, right = null, title = 'SEAMLIN
       </div>
 
       <div className="topbar-center">
-        <Link href="/" style={{ textDecoration: 'inherit', color: 'inherit' }}>
-          {title}
+        <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
+          <Image
+            src="/seamline-logo.png"
+            alt="Seamline"
+            width={150}
+            height={44}
+            style={{ objectFit: 'contain' }}
+            priority
+          />
         </Link>
       </div>
 

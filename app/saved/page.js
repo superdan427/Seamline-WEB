@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/hooks/useAuth';
+import Topbar from '@/components/Topbar';
 import {
   getSavedPlaceIds,
   removeSavedPlace,
@@ -122,15 +123,7 @@ export default function SavedPage() {
 
   return (
     <div className="page-saved">
-      <header className="topbar">
-        <div className="topbar-left">
-          <button className="icon-button" onClick={() => router.back()}>←</button>
-        </div>
-        <div className="topbar-center">
-          <a href="/" style={{ textDecoration: 'inherit', color: 'inherit' }}>SEAMLINE WEB 0.95</a>
-        </div>
-        <div className="topbar-right" />
-      </header>
+      <Topbar />
 
       <main className="saved-page">
         <section className="account-card saved-intro">
