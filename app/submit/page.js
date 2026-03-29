@@ -1,9 +1,6 @@
 'use client';
 
-export const metadata = {
-  title: 'Submit a Place — Seamline',
-  description: 'Know a fabric shop, supplier or tailor in London that should be on Seamline? Submit it here.',
-};
+
 
 import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';

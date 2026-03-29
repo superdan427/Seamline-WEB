@@ -1,9 +1,6 @@
 'use client';
 
-export const metadata = {
-  title: 'Account — Seamline',
-  description: 'Log in or create an account to save your favourite fabric shops in London.',
-};
+
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
