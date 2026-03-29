@@ -2,6 +2,7 @@ import Topbar from '@/components/Topbar';
 
 export const metadata = {
   title: 'About — Seamline',
+  description: 'Seamline is a directory of fabric shops, suppliers and tailors in London. Less scrolling. More making.',
 };
 
 export default function AboutPage() {

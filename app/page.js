@@ -1,5 +1,10 @@
 'use client';
 
+export const metadata = {
+  title: 'Seamline — London Fabric Map',
+  description: 'A map of fabric shops, leather suppliers, tailors and trimmings in London. Find the places fashion is built on.',
+};
+
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
